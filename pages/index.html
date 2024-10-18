@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>alpine</title>
+  <style>
+    [x-cloak] {
+      display: none !important;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>hi alpine.js</h1>
+  <h2>i love alpine.js</h2>
+  <a href="/login.html">go and test login project</a>
+  <!-- what is x-data its likes useState() in react -->
+  <section x-data="{name : 'soheil' , age : 20 , family : 'mansoori'}">
+    <span>
+      <h1 x-text="name"></h1>
+      <h2 x-text="family"></h2>
+      <h3 x-text="age"></h3>
+    </span>
+  </section>
+
+  <!-- simple accordion -->
+  <section x-data="{ isOpen: false }">
+    <div>
+      <button x-on:click="isOpen = ! isOpen">Toggle</button>
+
+      <div x-show="isOpen" x-on:click.outside="isOpen = false" x-transition>
+        Contents...
+      </div>
+    </div>
+  </section>
+
+  <!-- x-data simple counter -->
+  <section x-data="{
+        count : 0 ,
+        plusCount() {
+            this.count = this.count + 1;
+        } ,
+        minusCount () {
+            this.count = this.count - 1; 
+        } ,
+        reset () {
+            this.count = 0
+        }
+     }">
+    <h1 x-text="count"></h1>
+    <button x-on:click="plusCount">+</button>
+    <button x-on:click="minusCount">-</button>
+    <br />
+    <br />
+    <button x-on:click="reset">reset</button>
+  </section>
+
+  <!-- x-for simple loop -->
+  <section x-data="{ items :  ['Html' , 'Css' , 'Js' , 'React' , 'Alpine'] }">
+    <ul>
+      <template x-for="item of items">
+        <li x-text="item"></li>
+      </template>
+    </ul>
+  </section>
+
+  <!-- x-bind simple class changing -->
+  <section x-data="{ isRed : false, title : 'soheil-title' }">
+    <h1 x-text="title" x-bind:style="isRed ? {color : 'red'} : {color : 'black'}"></h1>
+    <button x-on:click="isRed = !isRed">change</button>
+  </section>
+
+  <!-- x-init simple get data from server -->
+  <section style="margin-top: 20px" x-data="{ 
+        users :  [] ,
+        loading : false ,
+        errorMessage : '',
+        // way 1 
+        //init(){
+        //    fetch('http://jsonplaceholder.typicode.com/users')
+        //        .then(res => res.json())
+        //        .then(users => this.users = users)
+        //        .catch(error => console.log(error.message)) 
+        //}
+        // way 2 
+        getUsers () {
+            this.loading = true
+            // console.log('get users function');
+            return fetch('http://jsonplaceholder.typicode.com/users')
+                .then(res => res.json())
+                .then(newUsers => {
+                    // console.log('users come from server' , newUsers)
+                    this.loading = false;
+                    return newUsers
+                })
+                .catch(error => {
+                    console.log(error.message);
+                    this.loading = false;
+                    this.errorMessage = 'failed to fetch'
+                });
+        }
+    }" x-init="users = await getUsers()">
+    <h1>get users form server</h1>
+    <!-- error message -->
+    <template x-if="errorMessage">
+      <p x-text="errorMessage"></p>
+    </template>
+    <!-- success data -->
+    <template x-if="loading">
+      <div>loading data ...</div>
+    </template>
+    <ul>
+      <template x-for="user of users">
+        <li>
+          <h3 x-text="user.name"></h3>
+          <p x-text="user.email"></p>
+        </li>
+      </template>
+    </ul>
+  </section>
+
+  <!-- x-model simple copy save text in user clipboard -->
+  <section x-data="{ 
+        message :  ''  ,
+        handleClick() {
+            navigator.clipboard.writeText(this.message)
+            alert(`copy ${this.message} in clipboard !!!`)
+            // empty input value
+            this.message = ''
+        }
+    }" style="margin-top: 30px">
+    <h1>copy in clipboard</h1>
+    <input type="text" x-model="message" />
+    <button x-on:click="handleClick()" x-bind:disabled="message ? false : true">
+      copy in clipboard
+    </button>
+  </section>
+
+  <!-- x-ref & $refs simple get element in alpine -->
+  <section x-data="{
+      handleClick () {
+        console.log('get my input with ref => ' , $refs.myInput)
+      },
+    }" style="margin-top: 50px">
+    <h1>test x-ref</h1>
+    <input type="text" x-ref="myInput" />
+    <button x-on:click="handleClick()">click me</button>
+  </section>
+
+  <!-- x-html to innerHTML to element in alpine -->
+  <section style="margin-top: 40px" x-data="{htmlData:'<h2>html data come from server</h2>'}">
+    <h1 style="font-size: 30px">x-html</h1>
+    <div x-html="htmlData"></div>
+  </section>
+
+  <!-- simple with x-show and alpine data in app.js dropdown  -->
+  <section x-data="dropdown(1)" style="margin-top: 50px">
+    <div>
+      <p x-on:click="openMainMenu(1)">dropdown 1</p>
+      <div x-show="menuID == 1" x-transition>
+        <div x-bind:style="menuID == 1 && {color : 'blue'}">
+          Content Lorem ipsum dolor sit, amet consectetur adipisicing elit.
+          Minus, amet.
+        </div>
+      </div>
+    </div>
+    <div>
+      <p x-on:click="openMainMenu(2)">dropdown 2</p>
+      <div x-show="menuID == 2" x-transition>
+        <div x-bind:style="menuID == 2 && {color : 'red'}">
+          Content Lorem ipsum dolor sit, amet consectetur adipisicing elit.
+          Minus, amet.
+        </div>
+      </div>
+    </div>
+    <div>
+      <p x-on:click="openMainMenu(3)">dropdown 3</p>
+      <div x-show="menuID == 3" x-transition>
+        <div x-bind:style="menuID == 3 && {color : 'green'}">
+          Content Lorem ipsum dolor sit, amet consectetur adipisicing elit.
+          Minus, amet.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- $store simple login system with alpine store in app.js -->
+  <section x-data="{
+        userNameInput : '',
+        userNameInputErrorMessage : '',
+        passwordInput : '',
+        passwordInputErrorMessage : '',
+        emptyInputValues() {
+          this.userNameInput = '';
+          this.passwordInput = '';
+        },
+        handelSubmit() {
+          // console.log('form submit success and values => ' , this.userNameInput , this.passwordInput);
+          // check the form validation 
+          const userNameInputRegex = /\w{5,12}/;
+          const isUserNameValid = userNameInputRegex.test(this.userNameInput);
+          if(!isUserNameValid) {
+            this.userNameInputErrorMessage = 'نام کاربری باید ۵ تا ۱۲ کلمه باشد';
+          }
+
+          const passwordInputRegex = /\w{5,15}/;
+          const isPasswordInputValid = passwordInputRegex.test(this.passwordInput);
+          if(!isPasswordInputValid){
+            this.passwordInputErrorMessage = 'رمز عبور باید ۵ تا ۱۵ کلمه باشد';
+          }
+          // send form to server
+          if(isUserNameValid && isPasswordInputValid) {
+          // create random token
+          const token = crypto.randomUUID();
+
+          // dispatch store to login  
+          $store.user.login(this.userNameInput , this.passwordInput , token)
+
+          // empty all input values 
+          this.emptyInputValues()  
+        }
+      }
+      }" style="margin-top: 50px">
+    <h1 style="font-size: 40px">Form</h1>
+    <!-- show form -->
+    <template x-if="!($store.user.isLogin)">
+      <form x-on:submit.prevent="handelSubmit">
+        <!-- username -->
+        <label for="username">username : </label>
+        <input type="text" x-model="userNameInput" placeholder="enter your username" id="username" />
+        <template x-if="userNameInputErrorMessage">
+          <p style="color: red; font-size: 12px" x-text="userNameInputErrorMessage"></p>
+        </template>
+        <br />
+        <br />
+        <!-- password -->
+        <label for="password">password : </label>
+        <input type="text" x-model="passwordInput" placeholder="enter your password" id="password" />
+        <template x-if="passwordInputErrorMessage">
+          <p style="color: red; font-size: 12px" x-text="passwordInputErrorMessage"></p>
+        </template>
+        <br />
+        <br />
+        <button type="submit" x-bind:disabled="userNameInput && passwordInput ? false : true">
+          submit
+        </button>
+      </form>
+    </template>
+    <!-- show user data after login -->
+    <template x-if="$store.user.isLogin">
+      <div>
+        <div style="font-size: 20px">** you log in **</div>
+        <p x-text="'your username : ' + $store.user.username"></p>
+        <p x-text="'your password : ' + $store.user.password"></p>
+        <button x-on:click="$store.user.logout()">log out</button>
+      </div>
+    </template>
+  </section>
+
+  <!-- $root is way to get the elements data-sets -->
+  <section x-data data-message="soheil data set" style="margin-top: 50px">
+    <h1 style="font-size: 30px">$root magic</h1>
+    <button x-on:click="alert(`your data set => ${$root.dataset.message}`)">
+      show root magic
+    </button>
+  </section>
+
+  <!-- $data for get the all data in component -->
+  <section style="margin-top: 50px" x-data="{
+      name : 'soheil', 
+      handleClick(parentsData) {
+        console.log('get all button data with $data => ', parentsData);
+        console.log('name is => ' , parentsData.name)
+        console.log('age is => ' , parentsData.age)
+      }
+    }">
+    <div x-data="{age :  21}">
+      <h1 style="font-size: 30px">$data magic</h1>
+      <button x-on:click="handleClick($data)">click to show $data</button>
+    </div>
+  </section>
+
+  <!-- $el magic for get current element -->
+  <section>
+    <p x-init="console.log('test $el magic to get main element => ' , $el)">
+      Lorem ipsum dolor sit amet.
+    </p>
+  </section>
+
+  <!-- $id magic likes useId in react -->
+  <section style="margin-top: 30px"
+    x-data="{langs : ['javaScrip' , 'php' , 'python' , 'kotlin' , 'java' , 'dart' , 'go']}">
+    <h1 style="font-size: 30px">$id magic</h1>
+    <!-- this have text-input-1 -->
+    <input type="text" x-bind:id="$id('text-input')" />
+    <br />
+    <br />
+    <!-- this have text-input-2 -->
+    <input type="text" x-bind:id="$id('text-input')" />
+    <!-- its main usage in loops for key property alpine like react have key property in loops -->
+    <ul x-data="{
+        showLoopItems (lang ,index , collection){
+          console.log('lang => ' , lang) ;
+          console.log('index => ' , index);
+          console.log('main array => ' , collection)
+        }
+      }">
+      <template x-for="(lang , index ,collection) of langs" x-bind:key="$id(lang)">
+        <li x-text="lang" x-init="showLoopItems(lang , index ,collection)"></li>
+      </template>
+    </ul>
+  </section>
+
+  <!-- x-modelable for connect two item and fix data -->
+  <section style="margin-top: 30px" x-data="{ number: 5 }">
+    <h1 style="font-size: 30px">x-modelable</h1>
+    <div x-data="{ count: 0 }" x-modelable="count" x-model="number"
+      x-effect="console.log('number is model => ' , number , 'count is modelable => ' , count)">
+      <button x-on:click="count++">Increment</button>
+    </div>
+    Number: <span x-text="number"></span>
+    <div>
+      <button x-on:click="number++">click to change number and count</button>
+    </div>
+  </section>
+
+  <!-- $nextTick magic for Promises -->
+  <section style="margin-top: 30px" x-data="{ 
+      users: [] ,
+      getUsers() {
+        fetch('https://jsonplaceholder.typicode.com/users')
+          .then(res => res.json())
+          .then(data => this.users = data)
+          .catch(error => console.log(error.message))
+      }  
+    }" x-init="await $nextTick(getUsers())">
+    <h1 style="font-size: 30px">$nextTick magic</h1>
+    <button x-on:click="await $nextTick(getUsers())">get users</button>
+    <template x-if="users.length">
+      <ol>
+        <template x-for="user of users" :key="user.id">
+          <ul>
+            <h2 x-text="user.name"></h2>
+            <p x-text="user.email"></p>
+          </ul>
+        </template>
+      </ol>
+    </template>
+  </section>
+
+  <!-- x-cloak its likes load later of load alpine cdn or alpine codes and need css code first -->
+  <section style="margin-top: 30px" x-data x-cloak x-show="true">
+    <h1 style="font-size: 30px">x-cloak</h1>
+    <span x-text="'This will not blip onto screen at any point'"></span>
+  </section>
+
+  <!-- x-teleport for send tag to your location of dom element its likes portal in react -->
+  <section style="margin-top: 30px" x-data="{ open: false }">
+    <h1 style="font-size: 30px">x-teleport</h1>
+    <button x-on:click="open = ! open">Toggle Modal</button>
+    <template x-teleport="body">
+      <div style="color: red; margin-top: 10px" x-show="open">
+        Modal contents in end of the body tag
+      </div>
+    </template>
+
+    <template x-teleport="#mySection">
+      <div style="color: red; margin-top: 10px" x-show="open">
+        content in end of body
+      </div>
+    </template>
+    <div id="mySection">
+      <!-- show here -->
+    </div>
+  </section>
+
+  <!-- x-ignore its for disable alpine codes for elements -->
+  <section style="margin-top: 30px" x-cloak x-data="{ label: 'From Alpine' }">
+    <h1 style="font-size: 30px">x-ignore</h1>
+    <div x-ignore>
+      <span x-text="'not work alpine codes here'">but its work</span>
+    </div>
+  </section>
+
+  <!-- x-transition for animation -->
+  <section style="margin-top: 30px" x-data="{ open: false }">
+    <h1 style="font-size: 30px">x-transition</h1>
+    <button x-on:click="open= !open">say hello</button>
+    <span x-show="open" x-transition> Hello 👋 </span>
+  </section>
+
+  <!-- alpine.bind x-bind value come form app.js -->
+  <div x-data>
+    <button style="margin-top: 30px" x-bind="myBind"></button>
+  </div>
+
+  <!-- simple search input with x-data & x-for & x-model -->
+  <section style="margin-top: 30px" x-data="{ 
+      searchInputValue :  '',
+      items : ['css' , 'js' , 'java' , 'python' , 'html' , 'php' , 'kotlin' , 'c++'],
+      get searchHandler() {
+        return this.items.filter(item => item.toLowerCase().includes(this.searchInputValue.toLowerCase()));
+      }
+    }">
+    <h1 style="font-size: 30px">search handler</h1>
+    <div>
+      <input type="text" x-model="searchInputValue" placeholder="search ..." />
+    </div>
+    <ul>
+      <template x-for="item of searchHandler" :key="item">
+        <li x-text="item"></li>
+      </template>
+    </ul>
+  </section>
+
+  <!-- event-prevent -->
+  <section x-data style="margin-top: 30px">
+    <h1 style="font-size: 30px">event-prevent</h1>
+    <form action="http://localhsot:400/server.php"
+      x-on:submit.prevent="() => console.log('form submitted and not refresh page')">
+      <button>Submit</button>
+    </form>
+  </section>
+
+  <!-- event-stop -->
+  <section x-data x-on:click="console.log('clicked ...')" style="margin-top: 30px">
+    <h1 style="font-size: 30px; margin-bottom: 3px">click work here</h1>
+    <div>
+      <button x-on:click.stop>click not work here</button>
+    </div>
+  </section>
+
+  <!-- event.window -->
+  <section x-data x-on:keyup.escape.window="(e) => console.log('keyup ...' , e)"></section>
+
+  <!-- event.once -->
+  <section x-data style="margin-top: 30px">
+    <h1 style="font-size: 30px; margin-bottom: 5px">event.once</h1>
+    <button x-on:click.once="console.log('I will only log once')">
+      click work one time
+    </button>
+  </section>
+
+  <!-- event-debounce run event after 250ms  -->
+  <section x-data style="margin-top: 30px">
+    <h1 style="font-size: 30px">debounce</h1>
+    <input x-on:input.debounce="() => console.log('run it')" placeholder="write some text" />
+    <input x-on:input.debounce.2000ms="() => console.log('run input after 2000ms')" placeholder="write some text" />
+  </section>
+
+  <!-- event-throttle run this event after 250ms -->
+  <section x-data>
+    <!-- <div
+        x-on:scroll.window.throttle="(e) => console.log('scroll ...' , e)"
+      ></div> -->
+    <div x-on:scroll.window.throttle.750ms="(e) => console.log('scroll ...' , e)"></div>
+  </section>
+
+  <!-- event-self run event just for parent element  event-self !== event-stop -->
+  <section x-data style="margin-top: 30px">
+    <h1 style="font-size: 30px">event-self</h1>
+    <button x-on:click.self="(e) => console.log('click ... => ' , e)">
+      Click Me
+      <img src="..." alt="img" />
+    </button>
+  </section>
+
+  <!-- event-capture for run event first -->
+  <section x-data style="margin-top: 30px">
+    <h1 style="margin-top: 30px">capture</h1>
+    <div x-on:click.capture="console.log('I will log first')">
+      <button x-on:click="console.log('I will log second')">click me</button>
+    </div>
+  </section>
+</body>
+
+</html>

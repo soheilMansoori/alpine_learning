@@ -1,0 +1,111 @@
+/* alpine */
+[x-cloak] {
+  display: none !important;
+}
+
+body {
+  font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+  box-sizing: border-box;
+  background-color: #080710;
+  color: white;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.form-wrapper {
+  position: relative;
+  min-width: 400px;
+  max-width: 320px;
+}
+
+.form-wrapper::before {
+  position: absolute;
+  z-index: -1;
+  bottom: 76%;
+  right: 76%;
+  content: "";
+  display: block;
+  width: 200px;
+  height: 200px;
+  border-radius: 100%;
+  background-color: red;
+}
+.form-wrapper::after {
+  position: absolute;
+  top: 76%;
+  left: 76%;
+  z-index: -1;
+  content: "";
+  display: block;
+  width: 200px;
+  height: 200px;
+  border-radius: 100%;
+  background-color: blue;
+}
+
+.form {
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+  padding: 50px 35px 35px;
+  background-color: rgba(255, 255, 255, 0.13);
+  border-width: 2px;
+  z-index: 999;
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10px);
+}
+
+.form .form-title {
+  text-align: center;
+  font-size: 32px;
+}
+
+.form .form-input-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 30px 0;
+}
+
+.form .form-input-wrapper .form-label {
+  font-size: 16px;
+}
+
+.form .form-input-wrapper .form-input {
+  color: white;
+  font-size: 14px;
+  background-color: rgba(255, 255, 255, 0.07);
+  height: 50px;
+  padding: 0 10px;
+  font-weight: 300;
+  outline: none;
+  border-radius: 10px;
+}
+
+.form .form-input-wrapper .form-input::placeholder {
+  color: white;
+}
+
+.form .form-input-wrapper .form-error-message {
+  font-size: 14px;
+  margin: 0 10px;
+  color: red;
+}
+
+.form .form-submit {
+  cursor: pointer;
+  margin-top: 25px;
+  font-weight: bold;
+  background-color: white;
+  border-radius: 10px;
+  width: 100%;
+  font-size: 18px;
+  padding: 15px 0;
+  border: none;
+}
+
+.form .form-submit:disabled {
+  opacity: 0.5;
+}

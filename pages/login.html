@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login</title>
+  </head>
+  <body>
+    <div class="form-wrapper">
+      <form
+        class="form"
+        x-data="loginFormValidation"
+        x-on:submit="submit($event)"
+      >
+        <h1 class="form-title">Login Here</h1>
+        <div class="form-input-wrapper">
+          <label for="" class="form-label">Username</label>
+          <input
+            x-model="fields.username.value"
+            x-on:blur="validateField(fields.username)"
+            x-on:input.change="validateField(fields.username)"
+            class="form-input"
+            type="text"
+            placeholder="Email or Phone"
+          />
+          <p class="form-error-message" x-cloak>
+            <span x-text="fields.username.error"></span>
+          </p>
+        </div>
+
+        <div class="form-input-wrapper">
+          <label for="" class="form-label">Password</label>
+          <input
+            x-model="fields.password.value"
+            x-on:blur="validateField(fields.password)"
+            x-on:input.change="validateField(fields.password)"
+            class="form-input"
+            type="password"
+            placeholder="password"
+          />
+          <p class="form-error-message" x-cloak>
+            <span x-text="fields.password.error"></span>
+          </p>
+        </div>
+
+        <button
+          x-bind:disabled="isFormInvalid || isFormSending"
+          type="submit"
+          class="form-submit"
+          x-text="isFormSending ? 'Sending ...' : 'Login'"
+        ></button>
+      </form>
+    </div>
+  </body>
+</html>
